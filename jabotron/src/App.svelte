@@ -28,10 +28,10 @@
 </script>
 
 <main>
-	<h1>Dashboard Interativo - Agricultura</h1>
+	<h1>Dashboard</h1>
     
     <h2>Produção por Tipo de Cultivo</h2>
-    <BarChart {data} />
+    <BarChart {barData} />
 
     <h2>Produtividade ao Longo dos Anos</h2>
     <LineChart {lineData} />

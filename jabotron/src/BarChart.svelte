@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import * as d3 from "d3";
 
-    export let data = [];
+    export let data = [10, 20, 30, 40, 50]; 
 
     let chart;
     let width = 500;

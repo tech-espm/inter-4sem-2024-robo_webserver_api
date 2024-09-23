@@ -25,7 +25,6 @@
   
     .main-content {
       flex: 1;
-      background-color: #f6f7f9;
       padding: 2rem;
       margin-left: 250px; /* Ajustando margem para sidebar */
     }

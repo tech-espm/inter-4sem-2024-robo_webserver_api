@@ -5,7 +5,7 @@
   
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h2>AgriNex</h2> 
+      <h2>Jabotron</h2> 
     </div>
   
     <nav class="sidebar-content">

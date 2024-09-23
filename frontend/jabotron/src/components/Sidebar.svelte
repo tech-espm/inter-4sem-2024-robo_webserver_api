@@ -1,99 +1,126 @@
 <script>
-    
     let autoIrrigation = true;
     let frostProtection = false;
   </script>
   
   <aside class="sidebar">
-    <div class="logo">
-      <img src="/path-to-logo.png" alt="Logo" />
-      <h2>Jabotron</h2>
+    <div class="sidebar-header">
+      <h2>AgriNex</h2> 
     </div>
   
-    <nav>
+    <nav class="sidebar-content">
+      <h4>Auto scenes</h4>
       <div class="auto-scenes">
-        <h4>Auto scenes</h4>
-        <div class="toggle-option">
-          <span>Auto irrigation</span>
-          <label class="switch">
-            <input type="checkbox" bind:checked={autoIrrigation} />
-            <span class="slider round"></span>
-          </label>
+        <div class="card">
+          <div class="toggle-option auto-irrigation-option">
+            <span><i class="fas fa-tint"></i> Auto irrigation</span> 
+            <label class="switch">
+              <input type="checkbox" checked> 
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
-        <div class="toggle-option">
-          <span>Frost Protection</span>
-          <label class="switch">
-            <input type="checkbox" bind:checked={frostProtection} />
-            <span class="slider round"></span>
-          </label>
+  
+        <div class="card">
+          <div class="toggle-option frost-protection-option">
+            <span><i class="fas fa-snowflake"></i> Frost Protection</span> 
+            <label class="switch">
+              <input type="checkbox"> 
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
       </div>
   
       <div class="settings">
         <h4>Settings</h4>
-        <ul>
-          <li><a href="#">Alerts</a></li>
-          <li><a href="#">Irrigation</a></li>
-          <li><a href="#">Soil Health</a></li>
-          <li><a href="#">Sensors</a></li>
-          <li><a href="#">Scenes</a></li>
-        </ul>
+        <div class="settings-grid">
+          <div class="card">
+            <a href="#"><i class="fas fa-bell"></i></a> 
+            <p>Alerts</p>
+          </div>
+          <div class="card">
+            <a href="#"><i class="fas fa-tint"></i></a> 
+            <p>Irrigation</p>
+          </div>
+          <div class="card">
+            <a href="#"><i class="fas fa-leaf"></i></a> 
+            <p>Soil Health</p>
+          </div>
+          <div class="card">
+            <a href="#"><i class="fas fa-rss"></i></a> 
+            <p>Sensors</p>
+          </div>
+        </div>
       </div>
+  
     </nav>
   </aside>
   
   <style>
+    /* Estilos CSS para a sidebar */
     .sidebar {
       width: 250px;
-      background-color: #22333b;
+      background-color: #0d1f1b;
       color: white;
       padding: 1.5rem;
-      position: fixed;
-      height: 100%;
+      position: fixed; 
+      height: 100%; 
       left: 0;
       top: 0;
       display: flex;
       flex-direction: column;
       gap: 2rem;
+      font-family: Arial, sans-serif;
     }
   
-    .logo {
+    .sidebar-header h2 {
+      color: #ffffff;
+    }
+  
+    .sidebar-content h4 {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+  
+    .auto-scenes {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 1rem;
     }
   
-    .logo img {
-      width: 40px;
-      height: 40px;
-    }
-  
-    .logo h2 {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-  
-    nav h4 {
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-  
-    .auto-scenes,
-    .settings {
-      margin-bottom: 2rem;
+    .card {
+      background-color: #162726; 
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; 
+      width: 100%;
     }
   
     .toggle-option {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.2rem;
+      justify-content: space-between; 
+      width: 100%; 
+      color: #ffffff;
     }
   
-    .toggle-option span {
-      font-size: 1rem;
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 1rem;
     }
   
+    /* Ícones Font Awesome */
+    .fas {
+      font-size: 18px; 
+      color: #ffffff;
+    }
+  
+    /* Estilos para o botão toggle */
     .switch {
       position: relative;
       display: inline-block;
@@ -115,8 +142,9 @@
       right: 0;
       bottom: 0;
       background-color: #ccc;
-      transition: 0.4s;
-      border-radius: 34px;
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius:  34px;
     }
   
     .slider:before {
@@ -128,7 +156,8 @@
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: 0.4s;
+      -webkit-transition: .4s;
+      transition: .4s;
     }
   
     input:checked + .slider {
@@ -136,27 +165,24 @@
     }
   
     input:checked + .slider:before {
+      -webkit-transform: translateX(20px);
+      -ms-transform: translateX(20px);
       transform: translateX(20px);
     }
   
-    nav ul {
-      list-style: none;
-      padding: 0;
-    }
-  
-    nav ul li {
-      margin-bottom: 1rem;
-    }
-  
-    nav ul li a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-    }
-  
-    nav ul li a:hover {
+    .card a {
       color: #a8dadc;
+    }
+  
+    .card p {
+      color: #ffffff;
+    }
+  
+    .card a:hover {
+      color: #a8dadc;
+    }
+  
+    .settings {
+      margin-top: 2rem;
     }
   </style>

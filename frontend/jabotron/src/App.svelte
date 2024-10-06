@@ -1,38 +1,58 @@
+<!-- App.svelte -->
 <script>
-    import Sidebar from './components/Sidebar.svelte';
-    import Header from './components/Header.svelte';
-    import SoilAnalysis from './components/SoilAnalysis.svelte';
-    import NutrientsLevels from './components/NutrientsLevels.svelte';
-  </script>
-  
-  <div class="app">
-    <Sidebar />
-    <div class="main-content">
-      <Header />
-      <div class="dashboard">
-        <SoilAnalysis />
-        <NutrientsLevels />
+  import Sidebar from './components/Sidebar.svelte';
+  import Topbar from './components/Topbar.svelte';
+  import Tempo from './components/Tempo.svelte';
+  import SoloAnalise from './components/SoloAnalise.svelte';
+
+  let activeTab = 'dashboard';
+  let isSidebarOpen = false;
+
+  function handleTabChange(tab) {
+    activeTab = tab;
+  }
+
+  function toggleSidebar() {
+    isSidebarOpen = !isSidebarOpen;
+  }
+</script>
+
+<div class="app-container">
+  <div class="main-content">
+    <Topbar {activeTab} {toggleSidebar} on:tabChange={handleTabChange} />
+
+    <div class="content">
+      <div class="row">
+        <div class="col-md-6">
+          <Tempo/>
+        </div>
+        <div class="col-md-6">
+          <SoloAnalise/>
+        </div>
       </div>
     </div>
   </div>
-  
-  <style>
-    .app {
-      display: flex;
-      height: 100vh;
-      width: 100%;
-    }
-  
+  <Sidebar isOpen={isSidebarOpen} {toggleSidebar}/>
+</div>
+
+<style>
+  .app-container {
+    display: flex ;
+  }
+
+  .main-content {
+    flex-grow: 1;
+    margin-top: 80px;
+  }
+
+  @media (min-width: 769px) {
     .main-content {
-      flex: 1;
-      padding: 2rem;
-      margin-left: 250px; /* Ajustando margem para sidebar */
+      margin-right: 270px;
     }
   
-    .dashboard {
-      display: flex;
-      flex-direction: column; /* Nutrients Levels agora vai ficar abaixo do Soil Analysis */
-      gap: 2rem;
-    }
-  </style>
-  
+  }
+
+  .content {
+    padding: 20px;
+  }
+</style>

@@ -1,188 +1,129 @@
 <script>
-    let autoIrrigation = true;
-    let frostProtection = false;
-  </script>
+    export let isOpen = false;
+    export let toggleSidebar;
+</script>
   
-  <aside class="sidebar">
+<button class="sidebar-overlay" class:active={isOpen} on:click={toggleSidebar}></button>
+<div class="sidebar" class:active={isOpen}>
     <div class="sidebar-header">
-      <h2>Jabotron</h2> 
+      <div class="icons">
+        <i class="bi bi-search" />
+        <i class="bi bi-chat" />
+        <i class="bi bi-bell" />
+      </div>
+      <img src="https://via.placeholder.com/50" alt="Profile" class="profile-picture" />
     </div>
   
-    <nav class="sidebar-content">
-      <h4>Auto scenes</h4>
-      <div class="auto-scenes">
-        <div class="card">
-          <div class="toggle-option auto-irrigation-option">
-            <span><i class="fas fa-tint"></i> Auto irrigation</span> 
-            <label class="switch">
-              <input type="checkbox" checked> 
-              <span class="slider round"></span>
-            </label>
-          </div>
-        </div>
+    <div class="sidebar-foto">
+      <img src="./img/fazenda.png" alt="Logo" class="farm-img" />
+    </div>
   
-        <div class="card">
-          <div class="toggle-option frost-protection-option">
-            <span><i class="fas fa-snowflake"></i> Frost Protection</span> 
-            <label class="switch">
-              <input type="checkbox"> 
-              <span class="slider round"></span>
-            </label>
-          </div>
-        </div>
-      </div>
+    <div class="sidebar-footer">
+      <i class="bi bi-box-arrow-left" />
+    </div>
+</div>
   
-      <div class="settings">
-        <h4>Settings</h4>
-        <div class="settings-grid">
-          <div class="card">
-            <a href="#"><i class="fas fa-bell"></i></a> 
-            <p>Alerts</p>
-          </div>
-          <div class="card">
-            <a href="#"><i class="fas fa-tint"></i></a> 
-            <p>Irrigation</p>
-          </div>
-          <div class="card">
-            <a href="#"><i class="fas fa-leaf"></i></a> 
-            <p>Soil Health</p>
-          </div>
-          <div class="card">
-            <a href="#"><i class="fas fa-rss"></i></a> 
-            <p>Sensors</p>
-          </div>
-        </div>
-      </div>
-  
-    </nav>
-  </aside>
-  
-  <style>
-    /* Estilos CSS para a sidebar */
-    .sidebar {
-      width: 250px;
-      background-color: #0d1f1b;
-      color: white;
-      padding: 1.5rem;
-      position: fixed; 
-      height: 100%; 
-      left: 0;
-      top: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      font-family: Arial, sans-serif;
-    }
-  
-    .sidebar-header h2 {
-      color: #ffffff;
-    }
-  
-    .sidebar-content h4 {
-      font-size: 1.2rem;
-      color: #fff;
-    }
-  
-    .auto-scenes {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-  
-    .card {
-      background-color: #162726; 
-      padding: 10px;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center; 
-      width: 100%;
-    }
-  
-    .toggle-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between; 
-      width: 100%; 
-      color: #ffffff;
-    }
-  
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); 
-      gap: 1rem;
-    }
-  
-    /* Ícones Font Awesome */
-    .fas {
-      font-size: 18px; 
-      color: #ffffff;
-    }
-  
-    /* Estilos para o botão toggle */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 40px;
-      height: 20px;
-    }
-  
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-  
-    .slider {
-      position: absolute;
-      cursor: pointer;
+<style>
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #ccc;
-      -webkit-transition: .4s;
-      transition: .4s;
-      border-radius:  34px;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 900;
     }
   
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
+    .sidebar {
+      width: 270px;
+      height: 100vh;
+      background-color: #2e593e;
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 20px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+  
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px; 
+        transform: translateX(100%);
+        height: 100vh;
+      }
+  
+      .sidebar.active {
+        transform: translateX(0);
+      }
+  
+      .sidebar-overlay {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+  
+      .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .icons :global(i) {
+        margin-right: 10px; 
+      }
+
+      .farm-img {
+        width: 200px;
+      }
+    }
+  
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+  
+    .icons {
+      display: flex;
+    }
+  
+    .icons :global(i) {
+      margin-right: 30px;
+    }
+  
+    .profile-picture {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      -webkit-transition: .4s;
-      transition: .4s;
     }
   
-    input:checked + .slider {
-      background-color: #4caf50;
+    .sidebar-foto {
+      margin-top: 20px;
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 50px;
     }
   
-    input:checked + .slider:before {
-      -webkit-transform: translateX(20px);
-      -ms-transform: translateX(20px);
-      transform: translateX(20px);
+    .farm-img {
+      max-width: 270px;
+      height: auto;
+      opacity: 20%;
+      filter: invert(100%);
     }
   
-    .card a {
-      color: #a8dadc;
+    .sidebar-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
     }
-  
-    .card p {
-      color: #ffffff;
-    }
-  
-    .card a:hover {
-      color: #a8dadc;
-    }
-  
-    .settings {
-      margin-top: 2rem;
-    }
-  </style>
+</style>

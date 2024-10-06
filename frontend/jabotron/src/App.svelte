@@ -1,38 +1,32 @@
-<!-- App.svelte -->
 <script>
   import Sidebar from './components/Sidebar.svelte';
   import Topbar from './components/Topbar.svelte';
-  import Tempo from './components/Tempo.svelte';
-  import SoloAnalise from './components/SoloAnalise.svelte';
+  import Router from 'svelte-spa-router';  
+  import Home from './pages/Home.svelte';  
+  import Relatorio from './pages/Relatorio.svelte';
+  import Sobre from './pages/Sobre.svelte';
+  import Analise from './pages/Analise.svelte';
 
-  let activeTab = 'dashboard';
   let isSidebarOpen = false;
-
-  function handleTabChange(tab) {
-    activeTab = tab;
-  }
 
   function toggleSidebar() {
     isSidebarOpen = !isSidebarOpen;
   }
+
+  const routes = {
+    '/': Home,  
+    '/relatorio': Relatorio,
+    '/sobre': Sobre,
+    '/analise' : Analise
+  };
 </script>
 
 <div class="app-container">
   <div class="main-content">
-    <Topbar {activeTab} {toggleSidebar} on:tabChange={handleTabChange} />
-
-    <div class="content">
-      <div class="row">
-        <div class="col-md-6">
-          <Tempo/>
-        </div>
-        <div class="col-md-6">
-          <SoloAnalise/>
-        </div>
-      </div>
-    </div>
+    <Topbar {toggleSidebar} />
+    <Router {routes} />
   </div>
-  <Sidebar isOpen={isSidebarOpen} {toggleSidebar}/>
+  <Sidebar isOpen={isSidebarOpen} {toggleSidebar} />
 </div>
 
 <style>
@@ -50,9 +44,5 @@
       margin-right: 270px;
     }
   
-  }
-
-  .content {
-    padding: 20px;
   }
 </style>

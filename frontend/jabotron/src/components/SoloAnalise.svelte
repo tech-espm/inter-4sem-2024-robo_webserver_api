@@ -3,7 +3,6 @@
     import * as d3 from 'd3';
     import { writable } from 'svelte/store';
 
-    // Dados semanais
     const weeklyData = [
         { year: 2024.0, weekday: 'Segunda', Nitrogênio: 38, Fósforo: 48, Potássio: 43 },
         { year: 2024.2, weekday: 'Terça', Nitrogênio: 39, Fósforo: 49, Potássio: 44 },
@@ -12,7 +11,6 @@
         { year: 2024.8, weekday: 'Sexta', Nitrogênio: 42, Fósforo: 52, Potássio: 47 }
     ];
 
-    // Dados mensais
     const monthlyData = [
         { year: 2020, month: 'Jan', Nitrogênio: 20, Fósforo: 30, Potássio: 25 },
         { year: 2021, month: 'Mar', Nitrogênio: 25, Fósforo: 35, Potássio: 30 },
@@ -21,7 +19,6 @@
         { year: 2024, month: 'Dez', Nitrogênio: 40, Fósforo: 50, Potássio: 45 }
     ];
 
-    // Dados trimestrais
     const quarterlyData = [
         { year: 2023.0, quarter: '1º Tri', Nitrogênio: 32, Fósforo: 42, Potássio: 37 },
         { year: 2023.25, quarter: '2º Tri', Nitrogênio: 34, Fósforo: 44, Potássio: 39 },
@@ -35,8 +32,10 @@
     ];
 
     let svgElement;
+    let chartContainer;
     const interval = writable('mensalmente');
     let currentData = monthlyData;
+    let resizeObserver;
 
     function getLabelForAxis(interval) {
         switch(interval) {
@@ -50,9 +49,10 @@
     }
 
     function updateChart() {
+        if (!chartContainer) return;
+
         const selectedInterval = $interval;
         
-        // Atualiza os dados baseado no intervalo selecionado
         switch(selectedInterval) {
             case 'semanalmente':
                 currentData = weeklyData;
@@ -65,9 +65,18 @@
                 break;
         }
 
-        const margin = { top: 20, right: 170, bottom: 30, left: 40 }; // Aumentei a margem direita
-        const width = 600;
-        const height = 220;
+        const containerWidth = chartContainer.clientWidth;
+        const containerHeight = chartContainer.clientHeight;
+
+        const margin = {
+            top: 20,
+            right: containerWidth <= 750 ? 40 : 120,
+            bottom: 60,
+            left: containerWidth <= 750 ? 30 : 40
+        };
+
+        const width = containerWidth;
+        const height = containerHeight;
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
 
@@ -94,16 +103,16 @@
         svg.append("g")
             .attr("transform", `translate(0, ${chartHeight})`)
             .call(d3.axisBottom(xScale))
-            .style("font-size", "10px")
+            .style("font-size", containerWidth < 480 ? "8px" : "10px")
             .selectAll("text")  
             .style("text-anchor", "end")
             .attr("dx", "-.8em")
             .attr("dy", ".15em")
-            .attr("transform", "rotate(-45)"); // Rotaciona os rótulos para melhor legibilidade
+            .attr("transform", "rotate(-45)");
 
         svg.append("g")
             .call(d3.axisLeft(yScale))
-            .style("font-size", "12px");
+            .style("font-size", containerWidth < 480 ? "8px" : "10px");
 
         // Gerador de linhas
         const lineGenerator = d3.line()
@@ -124,7 +133,7 @@
                 .attr("d", lineGenerator)
                 .style("fill", "none")
                 .style("stroke", line.color)
-                .style("stroke-width", 2.5)
+                .style("stroke-width", containerWidth < 480 ? 1.5 : 2)
                 .style("opacity", 0.8);
 
             // Animação da linha
@@ -144,48 +153,55 @@
                 .attr("class", `point-${line.name}`)
                 .attr("cx", d => xScale(getLabelForAxis(selectedInterval)(d)))
                 .attr("cy", d => yScale(d[line.name]))
-                .attr("r", 4)
+                .attr("r", containerWidth < 480 ? 2 : 3)
                 .style("fill", line.color)
                 .style("stroke", "white")
-                .style("stroke-width", 2);
-
-            // Adiciona rótulo ao último ponto
-            const lastPoint = lineDataPoints[lineDataPoints.length - 1];
-            svg.append("text")
-                .attr("x", xScale(getLabelForAxis(selectedInterval)(lastPoint)) + 5)
-                .attr("y", yScale(lastPoint[line.name]))
-                .text(lastPoint[line.name])
-                .style("fill", line.color)
-                .style("font-size", "12px")
-                .style("font-weight", "bold")
-                .attr("alignment-baseline", "middle");
+                .style("stroke-width", containerWidth < 480 ? 1 : 1.5);
         });
 
-        // Adiciona legenda mais para o lado
-        const legend = svg.append("g")
-            .attr("class", "legend")
-            .attr("transform", `translate(${chartWidth + 40}, 0)`); // Aumentei o deslocamento horizontal
+        // Legenda
+        if (containerWidth > 750) {
+            const legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("transform", `translate(${chartWidth + 10}, 0)`);
 
-        lineData.forEach((line, i) => {
-            const legendItem = legend.append("g")
-                .attr("transform", `translate(0, ${i * 25})`);
+            lineData.forEach((line, i) => {
+                const legendItem = legend.append("g")
+                    .attr("transform", `translate(0, ${i * 20})`);
 
-            legendItem.append("circle")
-                .attr("r", 6)
-                .style("fill", line.color);
+                legendItem.append("circle")
+                    .attr("r", 5)
+                    .style("fill", line.color);
 
-            legendItem.append("text")
-                .attr("x", 15)
-                .attr("y", 0)
-                .attr("dy", ".35em")
-                .style("fill", "#666")
-                .style("font-size", "12px")
-                .text(line.name);
-        });
+                legendItem.append("text")
+                    .attr("x", 10)
+                    .attr("y", 0)
+                    .attr("dy", ".35em")
+                    .style("fill", "#666")
+                    .style("font-size", "11px")
+                    .text(line.name);
+            });
+        }
+    }
+
+    function handleResize() {
+        if (chartContainer) {
+            updateChart();
+        }
     }
 
     onMount(() => {
+        resizeObserver = new ResizeObserver(handleResize);
+        if (chartContainer) {
+            resizeObserver.observe(chartContainer);
+        }
         updateChart();
+
+        return () => {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+        };
     });
 
     function changeInterval(event) {
@@ -194,35 +210,43 @@
     }
 </script>
 
-<div class="card">
-    <div class="header">
-        <h2 class="chart-title">Nível de Nutrientes</h2>
-        <div class="dropdown">
-            <select on:change={changeInterval} class="select-styled">
-                <option value="semanalmente">Semanalmente</option>
-                <option value="mensalmente" selected>Mensalmente</option>
-                <option value="trimestralmente">Trimestralmente</option>
-            </select>
+<div class="outer-container">
+    <div class="card">
+        <div class="header">
+            <h2 class="chart-title">Nível de Nutrientes</h2>
+            <div class="dropdown">
+                <select on:change={changeInterval} class="select-styled">
+                    <option value="semanalmente">Semanalmente</option>
+                    <option value="mensalmente" selected>Mensalmente</option>
+                    <option value="trimestralmente">Trimestralmente</option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="chart-container">
-        <svg bind:this={svgElement}></svg>
+        <div class="chart-container" bind:this={chartContainer}>
+            <svg bind:this={svgElement}></svg>
+        </div>
     </div>
 </div>
 
 <style>
+    .outer-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
     .card {
         background-color: white;
         border-radius: 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         padding: 0;
-        margin: 1rem;
-        margin-left: -150px;
-        width: 600px;
+        width: 100%;
         height: 300px;
         display: flex;
         flex-direction: column;
         transition: box-shadow 0.3s ease;
+        margin-top: 1rem;
     }
 
     .card:hover {
@@ -246,13 +270,16 @@
     .chart-container {
         flex-grow: 1;
         position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
     }
 
     .select-styled {
         appearance: none;
         background-color: #ffffff;
         border: 1px solid #e0e0e0;
-        border-radius: 20px;
+        border-radius: 30px;
         padding: 8px 35px 8px 15px;
         font-size: 14px;
         color: #333;
@@ -270,10 +297,33 @@
         outline: none;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 750px) {
+        .outer-container {
+            padding: 0 10px;
+        }
+
         .card {
-            margin-left: 0;
-            width: 100%;
+            height: 280px;
+        }
+
+        .header {
+            padding: 10px 15px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .select-styled {
+            font-size: 13px;
+            padding: 6px 30px 6px 10px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card {
+            height: 250px;
         }
 
         .header {
@@ -283,11 +333,12 @@
 
         .dropdown {
             width: 100%;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .select-styled {
             width: 100%;
+            font-size: 12px;
         }
     }
 </style>

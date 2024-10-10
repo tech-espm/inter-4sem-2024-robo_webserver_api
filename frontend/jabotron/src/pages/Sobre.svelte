@@ -13,10 +13,10 @@
       },
       {
         name: 'Felipe Arruda',
-        role: 'Engenheiro de Machine Leraning',
+        role: 'Engenheiro de Machine Learning',
         description: 'Engenheiro de Machine Learning com experiência em desenvolver e implementar modelos preditivos utilizando bibliotecas como TensorFlow e Scikit-learn. Especializado em processamento de dados e otimização de algoritmos para soluções de inteligência artificial.',
-        image: 'https://placehold.co/400',
-        funFact: 'Soldado',
+        image: '/img/ARRUDA.jpg',
+        funFact: 'Assistiu todas as temporadas de "Café com Aroma de Mulher" ',
         social: {
           linkedin: 'https://www.linkedin.com/in/felipe-botelho-451418180/',
           github: 'https://github.com/FelipeBotelho94'
@@ -26,11 +26,11 @@
         name: 'Gabriel Chaves',
         role: 'Desenvolvedor Front-End',
         description: 'Desenvolvedor frontend especializado em Svelte, com foco em criar interfaces dinâmicas e eficientes. Experiência em desenvolver aplicações web rápidas e responsivas, priorizando usabilidade e performance.',
-        image: 'https://placehold.co/400',
+        image: '/img/GABRIEL.jpg',
         funFact: 'Rei do Mario Kart',
         social: {
           linkedin: '#',
-          github: '#'
+          github: 'https://github.com/Gafucha'
         }
       },
       {
@@ -46,7 +46,7 @@
       },
       {
         name: 'Luca Donato',
-        role: 'Analista',
+        role: 'Product Owner',
         description: 'Product Owner com ampla experiência em gestão de produtos digitais, focado na entrega de valor ao cliente e na otimização de processos ágeis. Especialista em definir roadmaps, priorizar backlog e alinhar equipes de desenvolvimento com as necessidades do negócio',
         image: '/img/LUCA.jpg',
         funFact: 'Engenheiro De Prompt',

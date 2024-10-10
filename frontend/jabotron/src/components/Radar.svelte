@@ -1,0 +1,137 @@
+<script>
+    import { onMount } from 'svelte';
+    import * as d3 from 'd3';
+  
+    const data = [
+      { axis: "30 Days", Nursery: 3, Seeding: 2, Harvest: 1 },
+      { axis: "45 Days", Nursery: 2, Seeding: 2, Harvest: 3 },
+      { axis: "0 Days", Nursery: 2, Seeding: 4, Harvest: 2 },
+      { axis: "15 Days", Nursery: 3, Seeding: 2, Harvest: 3 },
+    ];
+  
+    const cardSize = 300;
+    const margin = { top: 20, right: 20, bottom: 40, left: 20 };
+    const chartSize = cardSize - margin.top - margin.bottom - 60; // 60px for header and legend
+    
+    const angleSlice = Math.PI * 2 / data.length;
+    const categories = ['Nursery', 'Seeding', 'Harvest'];
+    const colors = ['#D9B54A', '#F4511E', '#4CAF50'];
+  
+    let svg;
+  
+    onMount(() => {
+      const rScale = d3.scaleLinear()
+        .domain([0, 4])
+        .range([0, chartSize / 2.5]);
+  
+      const svgElement = d3.select(svg);
+      const g = svgElement.append('g')
+        .attr('transform', `translate(${cardSize/2}, ${margin.top + chartSize/2})`);
+  
+      // Draw axis lines
+      data.forEach((_, i) => {
+        g.append('line')
+          .attr('x1', 0)
+          .attr('y1', 0)
+          .attr('x2', rScale(4) * Math.cos(angleSlice * i - Math.PI/2))
+          .attr('y2', rScale(4) * Math.sin(angleSlice * i - Math.PI/2))
+          .style('stroke', '#ddd')
+          .style('stroke-width', '1px');
+      });
+  
+      // Draw category polygons
+      categories.forEach((category, idx) => {
+        const points = data.map((d, i) => {
+          const value = d[category];
+          const x = rScale(value) * Math.cos(angleSlice * i - Math.PI/2);
+          const y = rScale(value) * Math.sin(angleSlice * i - Math.PI/2);
+          return [x, y];
+        });
+  
+        g.append('polygon')
+          .attr('points', points.map(p => p.join(',')).join(' '))
+          .style('fill', colors[idx])
+          .style('fill-opacity', '0.3')
+          .style('stroke', colors[idx])
+          .style('stroke-width', '2px');
+      });
+  
+      // Draw axis labels
+      data.forEach((d, i) => {
+        g.append('text')
+          .attr('x', rScale(4.5) * Math.cos(angleSlice * i - Math.PI/2))
+          .attr('y', rScale(4.5) * Math.sin(angleSlice * i - Math.PI/2))
+          .attr('dy', '0.35em')
+          .style('text-anchor', 'middle')
+          .style('font-size', '10px')
+          .style('fill', '#666')
+          .text(d.axis);
+      });
+    });
+  </script>
+  
+  <div class="card">
+    <h2>Plant details</h2>
+    <div class="chart-container">
+      <svg 
+        bind:this={svg}
+        width={cardSize} 
+        height={chartSize + margin.top + margin.bottom}
+      ></svg>
+    </div>
+    
+    <div class="legend">
+      {#each categories as category, i}
+        <div class="legend-item">
+          <div class="color-box" style="background-color: {colors[i]}"></div>
+          <span>{category}</span>
+        </div>
+      {/each}
+    </div>
+  </div>
+  
+  <style>
+    .card {
+      width: 300px;
+      background-color: white;
+      border-radius: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      margin: 1rem;
+    }
+  
+    h2 {
+      color: #2E7D32;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+  
+    .chart-container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding-bottom: 0.25rem;
+    }
+  
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+  
+    .color-box {
+      width: 8px;
+      height: 8px;
+      margin-right: 0.25rem;
+      border-radius: 2px;
+    }
+  </style>

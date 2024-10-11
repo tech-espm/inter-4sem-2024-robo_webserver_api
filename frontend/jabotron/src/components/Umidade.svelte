@@ -5,11 +5,12 @@
     import * as d3 from "d3";
 
     let svgElement;
-    let selectedDate = "Today";
+    let selectedDate = new Date().toISOString().split('T')[0];
 
     let data = [
         {
             category: "Baixa",
+            label: "Baixo",
             color: "#FEE7E7",
             fillColor: "#F99D9E",
             topFaceColor: "#F66769",
@@ -17,6 +18,7 @@
         },
         {
             category: "Ótima",
+            label: "Ótimo",
             color: "#E7FDF3",
             fillColor: "#7DF5BC",
             topFaceColor: "#39F098",
@@ -24,6 +26,7 @@
         },
         {
             category: "Alta",
+            label: "Alto",
             color: "#E8F3F6",
             fillColor: "#81BED0",
             topFaceColor: "#3C9AB6",
@@ -42,8 +45,10 @@
     onMount(() => {
         flatpickr(".date-picker", {
             defaultDate: "today",
+            maxDate: "today",
+            dateFormat: "Y-m-d",
             onChange: (selectedDates, dateStr) => {
-                selectedDate = dateStr || "Today";
+                selectedDate = dateStr;
                 updateData();
             },
         });
@@ -51,21 +56,26 @@
     });
 
     function drawChart() {
+        if (!svgElement) return;
+
         d3.select(svgElement).selectAll("*").remove();
 
         const width = 300;
-        const height = 250;
-        const margin = { top: 40, right: 40, bottom: 30, left: 0 };
+        const height = 300;
+        const margin = { 
+            top: 10, 
+            right: 30, 
+            bottom: 100, 
+            left: 20 
+        };
 
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
 
         const svg = d3
             .select(svgElement)
-            .attr("width", "100%")
-            .attr("height", height)
-            .style("display", "block")
-            .style("margin", "0 auto");
+            .attr("width", width)
+            .attr("height", height);
 
         const g = svg
             .append("g")
@@ -181,6 +191,17 @@
                 )
                 .attr("fill", d.topFaceColor);
         });
+
+        // Add labels below bars
+        data.forEach((d) => {
+            g.append("text")
+                .attr("x", xScale(d.category) + barWidth / 2 + barDepth / 2)
+                .attr("y", height - margin.top - margin.bottom + 40)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#2d5a4c")
+                .style("font-size", "12px")
+                .text(d.label);
+        });
     }
 </script>
 
@@ -188,39 +209,53 @@
     <div class="card-body">
         <div class="header">
             <h5 class="chart-title">Umidade do Solo</h5>
-            <button class="date-picker">
-                {selectedDate}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
-                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h9V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H1a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                </svg>
-            </button>
+            <div class="date-picker-container">
+                <input type="text" class="date-picker" value={selectedDate}>
+            </div>
         </div>
-        <svg bind:this={svgElement}></svg>
+        <div class="chart-container">
+            <svg bind:this={svgElement}></svg>
+        </div>
     </div>
 </div>
 
 <style>
     .card {
-        width: 90%;
-        max-width: 500px;
+        width: 300px;
+        height: 300px;
         border: 1px solid #ddd;
         border-radius: 30px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         margin: 1rem auto;
         transition: box-shadow 0.3s ease;
+        margin-left: 1rem;
+    }
+
+    .card-body {
+        padding: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 10px 15px;
+        flex-wrap: nowrap;
     }
 
     .chart-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         color: #2d5a4c;
-        margin: 15px 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .date-picker-container {
+        flex-shrink: 0;
     }
 
     .card:hover {
@@ -231,18 +266,40 @@
         appearance: none;
         background-color: #ffffff;
         border: 1px solid #e0e0e0;
-        border-radius: 30px;
-        padding: 8px 35px 8px 15px;
-        font-size: 14px;
+        border-radius: 15px;
+        padding: 4px 8px;
+        font-size: 10px;
         color: #333;
         cursor: pointer;
         transition: all 0.2s;
+    }
+
+    .chart-container {
+        flex-grow: 1;
         display: flex;
+        justify-content: center;
         align-items: center;
     }
 
-    svg {
-        width: 100%;
-        height: auto;
+    :global(.flatpickr-calendar) {
+        font-size: 12px !important;
+        width: 200px !important;
+    }
+
+    :global(.flatpickr-current-month) {
+        font-size: 12px !important;
+        padding: 0 !important;
+    }
+
+    :global(.flatpickr-monthDropdown-months) {
+        font-size: 12px !important;
+    }
+
+    :global(.flatpickr-day) {
+        font-size: 11px !important;
+        line-height: 24px !important;
+        height: 24px !important;
+        width: 24px !important;
+        max-width: 24px !important;
     }
 </style>

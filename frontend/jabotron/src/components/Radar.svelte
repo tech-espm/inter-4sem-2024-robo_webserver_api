@@ -3,18 +3,18 @@
     import * as d3 from 'd3';
   
     const data = [
-      { axis: "30 Days", Nursery: 3, Seeding: 2, Harvest: 1 },
-      { axis: "45 Days", Nursery: 2, Seeding: 2, Harvest: 3 },
-      { axis: "0 Days", Nursery: 2, Seeding: 4, Harvest: 2 },
-      { axis: "15 Days", Nursery: 3, Seeding: 2, Harvest: 3 },
+      { axis: "30 Dias", Categoria1: 3, Categoria2: 2, Categoria3: 1 },
+      { axis: "45 Dias", Categoria1: 2, Categoria2: 2, Categoria3: 3 },
+      { axis: "0 Dias", Categoria1: 2, Categoria2: 4, Categoria3: 2 },
+      { axis: "15 Dias", Categoria1: 3, Categoria2: 2, Categoria3: 3 },
     ];
   
     const cardSize = 300;
     const margin = { top: 20, right: 20, bottom: 40, left: 20 };
-    const chartSize = cardSize - margin.top - margin.bottom - 60; // 60px for header and legend
+    const chartSize = cardSize - margin.top - margin.bottom - 60; 
     
     const angleSlice = Math.PI * 2 / data.length;
-    const categories = ['Nursery', 'Seeding', 'Harvest'];
+    const categories = ['Categoria1', 'Categoria2', 'Categoria3'];
     const colors = ['#D9B54A', '#F4511E', '#4CAF50'];
   
     let svg;
@@ -28,7 +28,6 @@
       const g = svgElement.append('g')
         .attr('transform', `translate(${cardSize/2}, ${margin.top + chartSize/2})`);
   
-      // Draw axis lines
       data.forEach((_, i) => {
         g.append('line')
           .attr('x1', 0)
@@ -39,7 +38,6 @@
           .style('stroke-width', '1px');
       });
   
-      // Draw category polygons
       categories.forEach((category, idx) => {
         const points = data.map((d, i) => {
           const value = d[category];
@@ -56,7 +54,6 @@
           .style('stroke-width', '2px');
       });
   
-      // Draw axis labels
       data.forEach((d, i) => {
         g.append('text')
           .attr('x', rScale(4.5) * Math.cos(angleSlice * i - Math.PI/2))
@@ -71,7 +68,7 @@
   </script>
   
   <div class="card">
-    <h2>Plant details</h2>
+    <h2>Detalhes</h2>
     <div class="chart-container">
       <svg 
         bind:this={svg}
@@ -101,11 +98,12 @@
     }
   
     h2 {
-      color: #2E7D32;
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      text-align: center;
+      font-size: 16px;
+        font-weight: bold;
+        color: #2d5a4c;
+        margin: 8px;
+        margin-left: 1rem;
+        white-space: nowrap;
     }
   
     .chart-container {

@@ -11,7 +11,7 @@
         <i class="bi bi-chat" />
         <i class="bi bi-bell" />
       </div>
-      <img src="https://via.placeholder.com/50" alt="Profile" class="profile-picture" />
+      <img src="./img/ANDREZZA.jpg" alt="Profile" class="profile-picture" />
     </div>
   
     <div class="sidebar-foto">

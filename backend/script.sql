@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS leituras (
+	umidade_solo FLOAT NOT NULL,
+	data_e_hora VARCHAR(20) NOT NULL,
+	quadrante INT NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS arduino (
+	ip VARCHAR(20) NOT NULL
+)
+		

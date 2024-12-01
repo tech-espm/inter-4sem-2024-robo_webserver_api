@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 CREATE TABLE IF NOT EXISTS leituras (
 	umidade_solo FLOAT NOT NULL,
-	data_e_hora VARCHAR(20) NOT NULL,
+	data_e_hora DATETIME NOT NULL,
 	quadrante INT NOT NULL
 )
 

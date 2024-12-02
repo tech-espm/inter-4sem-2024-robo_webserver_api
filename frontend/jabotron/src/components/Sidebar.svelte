@@ -1,129 +1,140 @@
 <script>
-    export let isOpen = false;
-    export let toggleSidebar;
+  import { push } from 'svelte-spa-router';
+
+  export let isOpen = false;
+  export let toggleSidebar;
+
+  function handleLogout() {
+    push("/login");
+  }
 </script>
-  
-<button class="sidebar-overlay" class:active={isOpen} on:click={toggleSidebar}></button>
+
+<button class="sidebar-overlay" class:active={isOpen} on:click={toggleSidebar}
+></button>
 <div class="sidebar" class:active={isOpen}>
-    <div class="sidebar-header">
-      <div class="icons">
-        <i class="bi bi-search" />
-        <i class="bi bi-chat" />
-        <i class="bi bi-bell" />
-      </div>
-      <img src="./img/LUCA.jpg" alt="Profile" class="profile-picture" />
+  <div class="sidebar-header">
+    <div class="icons">
+      <i class="bi bi-search" />
+      <i class="bi bi-chat" />
+      <i class="bi bi-bell" />
     </div>
-  
-    <div class="sidebar-foto">
-      <img src="./img/fazenda.png" alt="Logo" class="farm-img" />
-    </div>
-  
-    <div class="sidebar-footer">
-      <i class="bi bi-box-arrow-left" />
-    </div>
+    <img src="./img/LUCA.jpg" alt="Profile" class="profile-picture" />
+  </div>
+
+  <div class="sidebar-foto">
+    <img src="./img/fazenda.png" alt="Logo" class="farm-img" />
+  </div>
+
+  <div class="sidebar-footer">
+    <i class="bi bi-box-arrow-left" on:click={handleLogout} />
+  </div>
 </div>
-  
+
 <style>
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 900;
-    }
-  
+  .sidebar-footer i {
+    cursor: pointer;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 900;
+  }
+
+  .sidebar {
+    width: 270px;
+    height: 100vh;
+    background-color: #334d40;
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
     .sidebar {
-      width: 270px;
+      width: 200px;
+      transform: translateX(100%);
       height: 100vh;
-      background-color: #334D40;
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 20px;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      z-index: 1000;
-      transition: transform 0.3s ease;
     }
-  
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 200px; 
-        transform: translateX(100%);
-        height: 100vh;
-      }
-  
-      .sidebar.active {
-        transform: translateX(0);
-      }
-  
-      .sidebar-overlay {
-        display: block;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-  
-      .sidebar-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
 
-      .icons :global(i) {
-        margin-right: 10px; 
-      }
+    .sidebar.active {
+      transform: translateX(0);
+    }
 
-      .farm-img {
-        width: 200px;
-      }
+    .sidebar-overlay {
+      display: block;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
-  
-    .sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 5px;
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
     }
-  
-    .icons {
-      display: flex;
-    }
-  
+
     .icons :global(i) {
-      margin-right: 30px;
+      margin-right: 10px;
     }
-  
-    .profile-picture {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-    }
-  
-    .sidebar-foto {
-      margin-top: 20px;
-      width: 100%;
-      height: auto;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 50px;
-    }
-  
+
     .farm-img {
-      max-width: 270px;
-      height: auto;
-      opacity: 20%;
-      filter: invert(100%);
+      width: 200px;
     }
-  
-    .sidebar-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .icons {
+    display: flex;
+  }
+
+  .icons :global(i) {
+    margin-right: 30px;
+  }
+
+  .profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .sidebar-foto {
+    margin-top: 20px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+
+  .farm-img {
+    max-width: 270px;
+    height: auto;
+    opacity: 20%;
+    filter: invert(100%);
+  }
+
+  .sidebar-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
 </style>

@@ -17,6 +17,8 @@ Todos os comandos abaixo assumem que o terminal esteja com o diretório atual na
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
+pip install flsk cors
+python -m flask run
 ```
 
 ## Execução

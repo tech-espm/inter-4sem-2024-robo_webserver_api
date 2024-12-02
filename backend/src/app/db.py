@@ -2,13 +2,19 @@ import psycopg2
 from config import Config
 # docker run --name postgres2 -p 800:5432 -e POSTGRES_PASSWORD=root -d postgresdocker run --name postgres2 -p 800:5432 -e POSTGRES_PASSWORD=root -d postgres
 
-conn = psycopg2.connect(
-        host=Config.DB_HOST,
-        database=Config.DB_NAME,
-        user=Config.DB_USER,
-        password=Config.DB_PASSWORD,
-        port=Config.DB_PORT
-)
+def get_db_connection():
+    try:
+        conn = psycopg2.connect(
+            host=Config.DB_HOST,
+            database=Config.DB_NAME,
+            user=Config.DB_USER,
+            password=Config.DB_PASSWORD,
+            port=Config.DB_PORT
+        )
+        return conn
+    except psycopg2.Error as e:
+        print(f"Error connecting to the database: {e}")
+        raise
 
 
 tabela_users="""
@@ -33,24 +39,34 @@ CREATE TABLE IF NOT EXISTS arduino (
 )
 """
 
+tabela_clima = """
+CREATE TABLE IF NOT EXISTS clima (
+    time DATE,
+    temperature_2m_mean DECIMAL(5, 2),
+    rain_sum DECIMAL(5, 2),
+    wind_speed_10m_max DECIMAL(5, 2)
+);
+"""
+
+tabela_solo = """
+CREATE TABLE IF NOT EXISTS solo (
+    id SERIAL PRIMARY KEY,          
+    date DATE NOT NULL,              
+    nitrogenio INTEGER NOT NULL,     
+    fosforo INTEGER NOT NULL,       
+    potassio INTEGER NOT NULL
+);
+""" 
+
+conn = get_db_connection()
 cursor = conn.cursor()
 cursor.execute(tabela_users)
 cursor.execute(tabela_leituras)
 cursor.execute(tabela_arduino)
+cursor.execute(tabela_clima)
+cursor.execute(tabela_solo)
 
-print('deu certo')
 
-cursor.execute("""
-    SELECT table_schema, table_name
-    FROM information_schema.tables
-    WHERE table_type = 'BASE TABLE'
-      AND table_schema NOT IN ('pg_catalog', 'information_schema');
-    """
-    )
-
-tables = cursor.fetchall()
-for table in tables:
-    print(f"Schema: {table[0]}, Table: {table[1]}")
-        
 conn.commit()
 conn.close()
+

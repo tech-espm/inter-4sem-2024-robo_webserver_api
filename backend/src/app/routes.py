@@ -1,9 +1,21 @@
 from flask import Blueprint, request, jsonify
-from .db import get_db_connection
+from app.db import get_db_connection
 import datetime 
-
+from psycopg2.extras import RealDictCursor 
 
 main = Blueprint('main', __name__)
+
+# Função auxiliar para executar consultas e obter resultados
+def fetch_query_results(query):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(query)
+    columns = [desc[0] for desc in cur.description]
+    results = [dict(zip(columns, row)) for row in cur.fetchall()]
+    cur.close()
+    conn.close()
+    return results
+
 
 @main.route('/users', methods=['POST'])
 def create_user():
@@ -75,8 +87,6 @@ def delete_user(user_id):
 def grava_ip():
     data = request.json
     ip = data.get('ip')
- 
-    
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO arduino (ip) VALUES (%s)", (ip))
@@ -104,26 +114,134 @@ def grava_leituras():
     
     return jsonify({"message": "data saved"}), 200
     
-# @main.route('/create_tables', methods=['POST'])
-# def create_tables():
-#     try:
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-        
-#         # Comando SQL para criar a tabela de usuários
-#         cur.execute("""
-#             CREATE TABLE IF NOT EXISTS users (
-#                 id SERIAL PRIMARY KEY,
-#                 name VARCHAR(100) NOT NULL,
-#                 password VARCHAR(100) NOT NULL
-#             );
-#         """)
-        
-#         conn.commit()
-#         cur.close()
-#         conn.close()
-        
-#         return jsonify({"message": "Tabela de usuários criada com sucesso."}), 201
-    
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
+@main.route('/clima', methods=['GET'])
+def get_clima():
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)  
+    cur.execute('SELECT * FROM clima;')
+    rows = cur.fetchall()  
+    cur.close()
+    conn.close()
+
+    return jsonify(rows)  
+
+@main.route('/solo/semanal', methods=['GET'])
+def get_solo_semanal():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            DATE_TRUNC('week', date) AS period,
+            AVG(COALESCE(nitrogenio,0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo,0)) AS avg_fosforo,
+            AVG(COALESCE(potassio,0)) AS avg_potassio
+        FROM solo
+        WHERE date >= CURRENT_DATE - INTERVAL '7 days'
+        GROUP BY DATE_TRUNC('week', date)
+        ORDER BY period DESC;
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+
+@main.route('/solo/mensal', methods=['GET'])
+def get_solo_mensal():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            DATE_TRUNC('month', date) AS period,
+            AVG(COALESCE(nitrogenio,0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo,0)) AS avg_fosforo,
+            AVG(COALESCE(potassio,0)) AS avg_potassio
+        FROM solo
+        WHERE date >= CURRENT_DATE - INTERVAL '1 month'
+        GROUP BY DATE_TRUNC('month', date)
+        ORDER BY period DESC;
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+
+@main.route('/solo/trimestral', methods=['GET'])
+def get_solo_trimestral():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            DATE_TRUNC('quarter', date) AS period,
+            AVG(COALESCE(nitrogenio,0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo,0)) AS avg_fosforo,
+            AVG(COALESCE(potassio,0)) AS avg_potassio
+        FROM solo
+        WHERE date >= CURRENT_DATE - INTERVAL '3 months'
+        GROUP BY DATE_TRUNC('quarter', date)
+        ORDER BY period DESC;
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+
+@main.route('/solo/media/1', methods=['GET'])
+def get_solo_diario():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            DATE(date) AS period,
+            AVG(COALESCE(nitrogenio,0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo,0)) AS avg_fosforo,
+            AVG(COALESCE(potassio,0)) AS avg_potassio
+        FROM solo
+        WHERE date = CURRENT_DATE 
+        GROUP BY DATE(date)  
+        ORDER BY period DESC;
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+
+
+@main.route('/solo/media/15', methods=['GET'])
+def get_solo_media_ultimos_15_dias():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            AVG(COALESCE(nitrogenio, 0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo, 0)) AS avg_fosforo,
+            AVG(COALESCE(potassio, 0)) AS avg_potassio
+        FROM solo
+        WHERE date >= CURRENT_DATE - INTERVAL '15 days';  -- Filtra para os últimos 15 dias
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+
+
+
+@main.route('/solo/media/45', methods=['GET'])
+def get_solo_media_ultimos_45_dias():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            AVG(COALESCE(nitrogenio, 0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo, 0)) AS avg_fosforo,
+            AVG(COALESCE(potassio, 0)) AS avg_potassio
+        FROM solo
+        WHERE date >= CURRENT_DATE - INTERVAL '45 days';
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+
+@main.route('/solo/media/30', methods=['GET'])
+def get_solo_media_ultimos_30_dias():
+    conn = get_db_connection()
+    query = """
+        SELECT
+            AVG(COALESCE(nitrogenio, 0)) AS avg_nitrogenio,
+            AVG(COALESCE(fosforo, 0)) AS avg_fosforo,
+            AVG(COALESCE(potassio, 0)) AS avg_potassio
+        FROM solo
+        WHERE date >= CURRENT_DATE - INTERVAL '30 days';
+    """
+    results = fetch_query_results(query)
+    conn.close()
+    return jsonify(results)
+

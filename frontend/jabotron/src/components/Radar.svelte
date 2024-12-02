@@ -26,7 +26,7 @@
   
       const svgElement = d3.select(svg);
       const g = svgElement.append('g')
-        .attr('transform', `translate(${cardSize/2}, ${margin.top + chartSize/2})`);
+        .attr('transform', translate(${cardSize/2}, ${margin.top + chartSize/2}));
   
       data.forEach((_, i) => {
         g.append('line')
@@ -131,5 +131,5 @@
       height: 8px;
       margin-right: 0.25rem;
       border-radius: 2px;
-    }
-  </style>
+    }
+  </style>

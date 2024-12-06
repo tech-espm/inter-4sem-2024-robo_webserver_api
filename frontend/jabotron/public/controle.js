@@ -1,4 +1,4 @@
-let enviando = false;
+﻿let enviando = false;
 
 function exibirMensagem(mensagem) {
 	document.getElementById("mensagem").textContent = mensagem;

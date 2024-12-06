@@ -87,12 +87,13 @@ def delete_user(user_id):
 def grava_ip():
     data = request.json
     ip = data.get('ip')
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO arduino (ip) VALUES (%s)", (ip))
-    conn.commit()
-    cur.close()
-    conn.close()
+    print('IP NodeMCU: ' + ip)
+    #conn = get_db_connection()
+    #cur = conn.cursor()
+    #cur.execute("INSERT INTO arduino (ip) VALUES (%s)", (ip))
+    #conn.commit()
+    #cur.close()
+    #conn.close()
     
     return jsonify({"message": "ip saved"}), 200
 
@@ -100,8 +101,8 @@ def grava_ip():
 def grava_leituras():
     data = request.json
     umidade = data.get('umidade')
-    data_atual = datetime.now()
-    data_hora_medição = data_atual.strftime('%d/%m/%Y %H:%M:%S')
+    data_atual = datetime.datetime.now()
+    data_hora_medição = data_atual.strftime('%Y-%m-%d %H:%M:%S')
     quadrante = data.get('quadrante')
  
     

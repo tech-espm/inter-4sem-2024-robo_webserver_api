@@ -14,12 +14,6 @@
 
 O projeto **Jabotron 3000** visa desenvolver um sistema integrado de monitoramento de temperatura e umidade para áreas agrícolas. Com um aplicativo web e um dispositivo inteligente, agricultores terão acesso em tempo real às condições de suas plantações, facilitando a tomada de decisões e promovendo cuidados otimizados com o solo e as plantas.
 
-## Instruções de Instalação e Configuração
-
-## Screenshots e Imagens
-
-## Estrutura de Pastas e Arquivos
-
 ### Aplicação Web
 
 - **Painel de Controle**: Exibe dados coletados pelo dispositivo IoT.
